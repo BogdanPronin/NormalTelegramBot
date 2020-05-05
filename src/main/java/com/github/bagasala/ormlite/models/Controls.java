@@ -65,4 +65,12 @@ public class Controls {
         this.subject = subject;
         this.group = group;
     }
+
+    public Controls(int id, String type, String date, Subject subject, Group group) {
+        this.id = id;
+        this.type = type;
+        this.date = date;
+        this.subject = subject;
+        this.group = group;
+    }
 }

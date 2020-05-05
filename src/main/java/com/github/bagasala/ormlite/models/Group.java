@@ -1,36 +1,25 @@
 package com.github.bagasala.ormlite.models;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Objects;
 
+@DatabaseTable(tableName = "group")
 public class Group {
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(unique = true)
-    private String groupName;
     @DatabaseField
-    private int grade;
+    private String groupName;
+
 
     public Group() {
-    }
-
-    public Group(String groupName, int grade) {
-        this.groupName = groupName;
-        this.grade = grade;
-    }
-
-    public int getGrade() {
-        return grade;
-    }
-
-    public void setGrade(int grade) {
-        this.grade = grade;
     }
 
     public Group(String groupName) {
         this.groupName = groupName;
     }
+
 
     public int getId() {
         return id;
@@ -55,13 +44,12 @@ public class Group {
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
         return id == group.id &&
-                grade == group.grade &&
                 Objects.equals(groupName, group.groupName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, groupName, grade);
+        return Objects.hash(id, groupName);
     }
 
     @Override
@@ -69,7 +57,6 @@ public class Group {
         return "Group{" +
                 "id=" + id +
                 ", groupName='" + groupName + '\'' +
-                ", grade=" + grade +
                 '}';
     }
 }

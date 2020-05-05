@@ -11,24 +11,18 @@ public class Attendance {
     private int id;
     @DatabaseField(foreign = true,foreignAutoRefresh = true,foreignAutoCreate = false)
     private UserDb user;
-    @DatabaseField(foreign = true,foreignAutoRefresh = true,foreignAutoCreate = false)
-    private Group group;
     @DatabaseField
     private String date;
     @DatabaseField
     private boolean isAttends;
-    @DatabaseField
-    private boolean isValidReason;
 
     public Attendance() {
     }
 
-    public Attendance(UserDb user, Group group, String date, boolean isAttends, boolean isValidReason) {
+    public Attendance(UserDb user, String date, boolean isAttends) {
         this.user = user;
-        this.group = group;
         this.date = date;
         this.isAttends = isAttends;
-        this.isValidReason = isValidReason;
     }
 
     public int getId() {
@@ -45,14 +39,6 @@ public class Attendance {
 
     public void setUser(UserDb user) {
         this.user = user;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
     }
 
     public String getDate() {
@@ -72,13 +58,6 @@ public class Attendance {
         isAttends = attends;
     }
 
-    public boolean isValidReason() {
-        return isValidReason;
-    }
-
-    public void setValidReason(boolean validReason) {
-        isValidReason = validReason;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -87,14 +66,12 @@ public class Attendance {
         Attendance that = (Attendance) o;
         return id == that.id &&
                 isAttends == that.isAttends &&
-                isValidReason == that.isValidReason &&
                 Objects.equals(user, that.user) &&
-                Objects.equals(group, that.group) &&
                 Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, group, date, isAttends, isValidReason);
+        return Objects.hash(id, user, date, isAttends);
     }
 }

@@ -43,6 +43,17 @@ public class Schedule {
         this.subject = subject;
     }
 
+    public Schedule(int id, String startOfTheLesson, String endOfTheLesson, Days day, int cabinet, Group group, Subject subject, int serial_number) {
+        this.id = id;
+        this.startOfTheLesson = startOfTheLesson;
+        this.endOfTheLesson = endOfTheLesson;
+        this.day = day;
+        this.cabinet = cabinet;
+        this.group = group;
+        this.subject = subject;
+        this.serial_number = serial_number;
+    }
+
     public Schedule(String startOfTheLesson, String endOfTheLesson, Days day, int cabinet, Group group) {
         this.startOfTheLesson = startOfTheLesson;
         this.endOfTheLesson = endOfTheLesson;

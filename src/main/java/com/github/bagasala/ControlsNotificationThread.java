@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import static com.github.bagasala.Bot.notification;
 
@@ -26,16 +27,17 @@ public class ControlsNotificationThread extends Thread{
     public void run() {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            String notificationTime = LocalTime.of(14,58).format(formatter);
+            String notificationTime = LocalTime.of(16,00).format(formatter);
             while (true) {
                 String currentTime = LocalTime.now().format(formatter);
                 if (currentTime.equals(notificationTime)) {
 
                     for (UserDb userDb : userDao.queryForAll()) {
                         String chat_id = userDb.getChat_id();
-                        if (getControls(LocalDate.now().plusDays(1),userDb.getGroup())!="") {
+                        if (!getControls(LocalDate.now().plusDays(1),userDb.getGroup()).isEmpty()) {
                             try {
-                                notification(chat_id, getControls(LocalDate.now().plusDays(1),userDb.getGroup()));
+                                notification(chat_id, "Вот контрольные на завтра:");
+                                for(Controls controls: getControls(LocalDate.now().plusDays(1),userDb.getGroup())){}
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -56,18 +58,18 @@ public class ControlsNotificationThread extends Thread{
         }
 
     }
-    public String getControls(LocalDate date, Group group){
+    public ArrayList<Controls> getControls(LocalDate date, Group group){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String s="";
+        ArrayList<Controls> controls = new ArrayList<>();
         for(Controls control: controlsDao){
             if(control.getGroup().equals(group)) {
                 LocalDate parsedDate = LocalDate.parse(control.getDate(), formatter);
                 date = LocalDate.parse(date.toString(), formatter);
                 if (parsedDate.equals(date)) {
-                    s+=control.toString();
+                    controls.add(control);
                 }
             }
         }
-        return s;
+        return controls;
     }
 }
