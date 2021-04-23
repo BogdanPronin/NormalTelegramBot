@@ -12,7 +12,7 @@ public class DatabaseConfiguration {
     public static ConnectionSource connectionSource;
     static {
         try{
-            connectionSource = new JdbcConnectionSource("jdbc:sqlite:/Users/bogdan/Desktop/telegramBot/mncDB.db");
+            connectionSource = new JdbcConnectionSource("jdbc:sqlite:/Users/bogdan/Desktop/telegramBot/studyControl.db");
             TableUtils.createTableIfNotExists(connectionSource, UserDb.class);
             TableUtils.createTableIfNotExists(connectionSource, Subject.class);
             TableUtils.createTableIfNotExists(connectionSource, Group.class);

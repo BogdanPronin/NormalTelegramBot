@@ -58,7 +58,18 @@ public class Bot extends TelegramLongPollingBot {
     private Map<String,Boolean> buttonControlIsPressed = new HashMap<>();
     private Map<String,Boolean> buttonScheduleIsPressed = new HashMap<>();
     private Map<String, String> dates = new HashMap<>();
-    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd");
+
+    //
+    public String getSchedulePath(){
+        return getDirPath()+"/schedule/";
+    }
+
+    public String getDirPath(){
+        return "/Users/bogdan/Desktop/telegramBot";
+    }
+    //
+
     static {
         try {
             userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource,UserDb.class);
@@ -342,7 +353,6 @@ public class Bot extends TelegramLongPollingBot {
         String s = "";
         for(Schedule schedule: schedules){
             s+=schedule.toString()+"\n";
-
         }
         return s;
     }
@@ -926,9 +936,7 @@ public class Bot extends TelegramLongPollingBot {
         return controls;
     }
 
-    public String getDirPath(){
-        return "C:\\Users\\MI\\Desktop\\telegram bot\\";
-    }
+
     public void addStudentInterface(Update update) throws SQLException {
         if(update.hasMessage()){
             Message message = update.getMessage();
@@ -1184,8 +1192,6 @@ public class Bot extends TelegramLongPollingBot {
     public String getBotToken() {
         return "1213409409:AAEpGc8wuxiF-TRbdKFmyZEy7ltsfFnuBfo";
     }
-    public String getSchedulePath(){
-        return "/Users/bogdan/Desktop/telegramBot/schedule/";
-    }
+
 
 }

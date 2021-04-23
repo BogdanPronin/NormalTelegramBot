@@ -29,7 +29,7 @@ public class NotificationThread extends Thread {
         try {
             Dao<UserDb, Integer> userDao = DaoManager.createDao(DatabaseConfiguration.connectionSource, UserDb.class);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            String notificationTime = LocalTime.of(21,00).format(formatter);
+            String notificationTime = LocalTime.of(16,00).format(formatter);
             while (true){
                 String currentTime = LocalTime.now().format(formatter);
                  if (currentTime.equals(notificationTime)) {

@@ -73,4 +73,9 @@ public class Controls {
         this.subject = subject;
         this.group = group;
     }
+
+    @Override
+    public String toString() {
+        return  type + " "+ date +" " + subject +" "+group;
+    }
 }

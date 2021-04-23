@@ -27,7 +27,7 @@ public class ControlsNotificationThread extends Thread{
     public void run() {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            String notificationTime = LocalTime.of(16,00).format(formatter);
+            String notificationTime = LocalTime.of(21,00).format(formatter);
             while (true) {
                 String currentTime = LocalTime.now().format(formatter);
                 if (currentTime.equals(notificationTime)) {
@@ -37,7 +37,9 @@ public class ControlsNotificationThread extends Thread{
                         if (!getControls(LocalDate.now().plusDays(1),userDb.getGroup()).isEmpty()) {
                             try {
                                 notification(chat_id, "Вот контрольные на завтра:");
-                                for(Controls controls: getControls(LocalDate.now().plusDays(1),userDb.getGroup())){}
+                                for(Controls control:getControls(LocalDate.now().plusDays(1), userDb.getGroup())){
+                                    notification(chat_id,control.toString());
+                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -59,13 +61,14 @@ public class ControlsNotificationThread extends Thread{
 
     }
     public ArrayList<Controls> getControls(LocalDate date, Group group){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd");
         ArrayList<Controls> controls = new ArrayList<>();
         for(Controls control: controlsDao){
             if(control.getGroup().equals(group)) {
                 LocalDate parsedDate = LocalDate.parse(control.getDate(), formatter);
-                date = LocalDate.parse(date.toString(), formatter);
-                if (parsedDate.equals(date)) {
+                String date2 = date.format(formatter);
+                LocalDate localDate = LocalDate.parse(date2,formatter);
+                if (parsedDate.equals(localDate)) {
                     controls.add(control);
                 }
             }
