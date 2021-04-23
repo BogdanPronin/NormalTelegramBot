@@ -64,9 +64,15 @@ public class Bot extends TelegramLongPollingBot {
     public String getSchedulePath(){
         return getDirPath()+"/schedule/";
     }
+    public static void getSalaPath(){
+
+    }
+    public String getBagaPath(){
+        return "/Users/bogdan/Desktop/telegramBot";
+    }
 
     public String getDirPath(){
-        return "/Users/bogdan/Desktop/telegramBot";
+        return getBagaPath();
     }
     //
 
@@ -712,7 +718,7 @@ public class Bot extends TelegramLongPollingBot {
                         String fileId = message.getDocument().getFileId();
                         Runnable task = () -> {
                             try {
-                                uploadFile(homeTasks.get(chatId).getSubject().getName() + "\\" + fileName, fileId);
+                                uploadFile(homeTasks.get(chatId).getSubject().getName() + "/" + fileName, fileId);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -720,7 +726,7 @@ public class Bot extends TelegramLongPollingBot {
                         Thread thread = new Thread(task);
                         thread.start();
                         l.info("@setting file to hometask");
-                        homeTasks.get(chatId).setFilePath(getDirPath() + homeTasks.get(chatId).getSubject().getName() + "\\" + fileName);
+                        homeTasks.get(chatId).setFilePath(getDirPath() + homeTasks.get(chatId).getSubject().getName() + "/" + fileName);
                         homeTaskDao.create(homeTasks.get(chatId));
                         l.info("@hometask object was created");
                         map.remove(chatId);
@@ -814,6 +820,7 @@ public class Bot extends TelegramLongPollingBot {
         ArrayList<String> subject = new ArrayList<>();
         ArrayList<Integer> serialNum = new ArrayList<>();
         ArrayList<Schedule> schedules = new ArrayList<>();
+        ArrayList<String> daysForSchedule = new ArrayList<>();
         Group grp;
         Subject sbjct;
         int position;
@@ -873,9 +880,38 @@ public class Bot extends TelegramLongPollingBot {
             }
             schedules.add(new Schedule(i, String.valueOf(startOfLesson.get(i)), String.valueOf(endOfLesson.get(i)),
                     Days.valueOf(day.get(i).toUpperCase()), cabinet.get(i), grp, sbjct, serialNum.get(i)));
+            boolean isDayExist = false;
+            if(daysForSchedule.isEmpty()){
+                daysForSchedule.add(day.get(i).toUpperCase());
+            } else {
+                for(int j=0; j<daysForSchedule.size(); j++){
+                    if(daysForSchedule.get(j).equalsIgnoreCase(day.get(i))){
+                        isDayExist = true;
+                        break;
+                    }
+                }
+                if(!isDayExist){
+                    daysForSchedule.add(day.get(i));
+                    l.info("adding day "+day.get(i)+" to schedule day list");
+                }
+            }
         }
+        removeScheduleSimilarDays(daysForSchedule);
         l.info("@@@parcing done");
         return schedules;
+    }
+
+    public void removeScheduleSimilarDays(ArrayList<String> daysForSchedule) throws SQLException {
+        l.info("DELETING similar days");
+        for(Schedule sch: scheduleDao.queryForAll()){
+            for(int i=0;i<daysForSchedule.size();i++){
+                if(sch.getDay().toString().equalsIgnoreCase(daysForSchedule.get(i))){
+                    scheduleDao.deleteById(sch.getId());
+                    l.info("deleted "+sch.toString());
+                    break;
+                }
+            }
+        }
     }
 
     public ArrayList<Controls> parceControlExcel(File excel) throws IOException, SQLException {
