@@ -328,6 +328,7 @@ public class Bot extends TelegramLongPollingBot {
                         try {
                             sendPhoto(msg); // Call method to send the photo
                             hideKeyboard(chat_id);
+                            l.info(sendMessage.toString());
                             sendMessage(sendMessage);
 
                             buttonScheduleIsPressed.put(chId, false);
@@ -820,7 +821,7 @@ public class Bot extends TelegramLongPollingBot {
         ArrayList<String> subject = new ArrayList<>();
         ArrayList<Integer> serialNum = new ArrayList<>();
         ArrayList<Schedule> schedules = new ArrayList<>();
-        ArrayList<String> daysForSchedule = new ArrayList<>();
+        ArrayList<Schedule> newSchedule = new ArrayList<>();
         Group grp;
         Subject sbjct;
         int position;
@@ -878,34 +879,37 @@ public class Bot extends TelegramLongPollingBot {
             if(grp == null || sbjct == null){
                 throw new NullPointerException();
             }
-            schedules.add(new Schedule(i, String.valueOf(startOfLesson.get(i)), String.valueOf(endOfLesson.get(i)),
-                    Days.valueOf(day.get(i).toUpperCase()), cabinet.get(i), grp, sbjct, serialNum.get(i)));
-            boolean isDayExist = false;
-            if(daysForSchedule.isEmpty()){
-                daysForSchedule.add(day.get(i).toUpperCase());
+            Schedule sch = new Schedule(i, String.valueOf(startOfLesson.get(i)), String.valueOf(endOfLesson.get(i)),
+                    Days.valueOf(day.get(i).toUpperCase()), cabinet.get(i), grp, sbjct, serialNum.get(i));
+            schedules.add(sch);
+            boolean isRowExist = false;
+            if(newSchedule.isEmpty()){
+                newSchedule.add(sch);
             } else {
-                for(int j=0; j<daysForSchedule.size(); j++){
-                    if(daysForSchedule.get(j).equalsIgnoreCase(day.get(i))){
-                        isDayExist = true;
+                for(int j=0; j<newSchedule.size(); j++){
+                    if(newSchedule.get(j).getDay().toString().equalsIgnoreCase(day.get(i))
+                            && newSchedule.get(j).getGroup().equals(grp)){
+                        isRowExist = true;
                         break;
                     }
                 }
-                if(!isDayExist){
-                    daysForSchedule.add(day.get(i));
-                    l.info("adding day "+day.get(i)+" to schedule day list");
+                if(!isRowExist){
+                    newSchedule.add(sch);
+                    l.info("adding day "+
+                            sch.toString()+" to schedule list");
                 }
             }
         }
-        removeScheduleSimilarDays(daysForSchedule);
+        removeScheduleSimilarDays(newSchedule);
         l.info("@@@parcing done");
         return schedules;
     }
 
-    public void removeScheduleSimilarDays(ArrayList<String> daysForSchedule) throws SQLException {
+    public void removeScheduleSimilarDays(ArrayList<Schedule> newSchedule) throws SQLException {
         l.info("DELETING similar days");
         for(Schedule sch: scheduleDao.queryForAll()){
-            for(int i=0;i<daysForSchedule.size();i++){
-                if(sch.getDay().toString().equalsIgnoreCase(daysForSchedule.get(i))){
+            for(int i=0;i<newSchedule.size();i++){
+                if(sch.getDay().equals(newSchedule.get(i).getDay()) && sch.getGroup().equals(newSchedule.get(i).getGroup())){
                     scheduleDao.deleteById(sch.getId());
                     l.info("deleted "+sch.toString());
                     break;
@@ -913,7 +917,6 @@ public class Bot extends TelegramLongPollingBot {
             }
         }
     }
-
     public ArrayList<Controls> parceControlExcel(File excel) throws IOException, SQLException {
         ArrayList<String> type = new ArrayList<>();
         ArrayList<String> date = new ArrayList<>();
